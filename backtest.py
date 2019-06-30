@@ -40,7 +40,27 @@ for symbol in stock_list:
     response = requests.get(request_url)
     response_message = response.text
     parsed_response = json.loads(response.text)
-    print(parsed_response)
+    tsd = parsed_response["Time Series (Daily)"]
+    dates = list(tsd.keys())
+    #print(parsed_response)
+    csv_file_path = os.path.join(os.path.dirname(__file__), "data", f"{symbol}.prices.csv")
+    csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
+
+    with open(csv_file_path, "w") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
+        writer.writeheader() # uses fieldnames set above
+        for date in dates:
+            daily_prices = tsd[date]    
+    #looping
+            writer.writerow({
+                "timestamp": date, 
+                "open": daily_prices["1. open"],
+                "high": daily_prices["2. high"],
+                "low": daily_prices["3. low"],
+                "close": daily_prices["4. close"],
+                "volume": daily_prices["5. volume"]
+            })
+
 #last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
 #tsd = parsed_response["Time Series (Daily)"]
 #dates = list(tsd.keys())
