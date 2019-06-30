@@ -110,19 +110,26 @@ print(data_sum)
 
 #print cumulative daily returns
 data_frame_cum = data_sum.cumprod()
+data_frame_cum_sort = data_frame_cum.sort_index(ascending=True)
 print(data_frame_cum)
 
 ##calculate ratios
 #annual standard deviation
 st_dev = data_row_total.values.std() * math.sqrt(252)
+avg_daily = data_row_total.mean() * 252
+sharpe_ratio = avg_daily / st_dev
+
 print (st_dev)
+print(avg_daily)
+print(sharpe_ratio)
+
 
 
 #plot the cumulative returns over time
-# plotly.offline.plot({
-#     "data": [go.Scatter(x=dates, y=data_sum)],
-#     "layout": go.Layout(title= "Price Chart")
-# }, auto_open=True)
+plotly.offline.plot({
+    "data": [go.Scatter(x=dates, y=data_frame_cum_sort)],
+    "layout": go.Layout(title= "Price Appreciate of $1 Invested")
+}, auto_open=True)
 
 
 
