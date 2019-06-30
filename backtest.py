@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 stock_list = ["MSFT", "GOOG"]
-weight_list = [50,50]
+weight_list = [50,10]
 
 # while True:
 #     stock_symbol = input("Please enter stock symbol or 'DONE' if complete: ")
@@ -90,8 +90,11 @@ new_frame = frame[['close']]
 # #print(stock)
 print(new_frame)
 
+
 daily_return = new_frame.pct_change(1)
 print(new_frame.pct_change(1))
+data_frame = daily_return.mul(weight_list)
+print(data_frame)
 # def daily_return(new_frame):
 #     return prices[:-1].values / prices[1:] - 1
 
