@@ -75,16 +75,21 @@ for symbol in stock_list:
                 #"volume": daily_prices["5. volume"]
             })
 
-      
+
+
+#Read CSV files into Pandas Data Frame
+
 path = r'C:\Users\tyler\Documents\GitHub\Freestyle-Project\data' # use your path
 all_files = glob.glob(path + "/*.csv")
 
 li = []
 for filename in all_files:
-    df = pd.read_csv(filename, header=0).head(25)
+    df = pd.read_csv(filename, header=0).head(10)
     li.append(df)
 frame = pd.concat(li, axis=1)
 print(frame)
+
+
 #sort dates oldest to newest
 frames = frame.sort_index(ascending=False)
 
@@ -118,17 +123,20 @@ print(data_frame_cum)
 st_dev = data_row_total.values.std() * math.sqrt(252)
 avg_daily = data_row_total.mean() * 252
 sharpe_ratio = avg_daily / st_dev
+skew = data_row_total.skew()
+#kurtosis = data_row_total.kurt()
 
 print (st_dev)
 print(avg_daily)
 print(sharpe_ratio)
-
+print(skew)
+#print(kurtosis)
 
 
 #plot the cumulative returns over time
 plotly.offline.plot({
     "data": [go.Scatter(x=dates, y=data_frame_cum_sort)],
-    "layout": go.Layout(title= "Price Appreciate of $1 Invested")
+    "layout": go.Layout(title= "Price Appreciation of $1 Invested")
 }, auto_open=True)
 
 
