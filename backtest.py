@@ -99,3 +99,5 @@ print(data_frame)
 data_frame_sum = data_frame.sum(axis=1)
 print(data_frame_sum)
 
+data_frame_sum.add(1)
+print(data_frame_sum.add(1))
