@@ -77,25 +77,31 @@ path = r'C:\Users\tyler\Documents\GitHub\Freestyle-Project\data' # use your path
 all_files = glob.glob(path + "/*.csv")
 
 li = []
-
 for filename in all_files:
     df = pd.read_csv(filename, header=0).head(3)
     li.append(df)
-
 frame = pd.concat(li, axis=1)
 new_frame = frame[['close']]
+
 # df.columns = stock_list
 #print(frame)
 # #print(type(frame))
 # #stock = pandas.DataFrame[0]
 # #print(stock)
 print(new_frame)
+
+daily_return = new_frame.pct_change(1)
+print(new_frame.pct_change(1))
+# def daily_return(new_frame):
+#     return prices[:-1].values / prices[1:] - 1
+
+
+
 #values = df.values.tolist()
 #frames = list(frame.row.values)
 #print(values)
 
-# def daily_return(frame):
-#     return prices[:-1].values / prices[1:] - 1
+
 
 # daily_return(frame[0])
     
