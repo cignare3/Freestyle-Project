@@ -67,7 +67,7 @@ for symbol in stock_list:
             daily_prices = tsd[date]  
     
     #looping
-            writer.writerow({
+            writer.writerows.sort({
                 "timestamp": date, 
                 #"open": daily_prices["1. open"],
                 #"high": daily_prices["2. high"],
@@ -81,7 +81,6 @@ path = r'C:\Users\tyler\Documents\GitHub\Freestyle-Project\data' # use your path
 all_files = glob.glob(path + "/*.csv")
 
 li = []
-print(all_files)
 for filename in all_files:
     df = pd.read_csv(filename, header=0).head(5)
     li.append(df)
