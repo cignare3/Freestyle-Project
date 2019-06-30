@@ -83,13 +83,12 @@ all_files = glob.glob(path + "/*.csv")
 li = []
 print(all_files)
 for filename in all_files:
-    df = pd.read_csv(filename, header=0).head(3)
+    df = pd.read_csv(filename, header=0).head(5)
     li.append(df)
 frame = pd.concat(li, axis=1)
 new_frame = frame[['close']]
 
 print(new_frame)
-
 
 daily_return = new_frame.pct_change(1)
 print(new_frame.pct_change(1))
@@ -99,5 +98,16 @@ print(data_frame)
 data_frame_sum = data_frame.sum(axis=1)
 print(data_frame_sum)
 
-data_frame_sum.add(1)
-print(data_frame_sum.add(1))
+data_sum = data_frame_sum.add(1)
+print(data_sum)
+
+data_frame_cum = data_sum.cumprod()
+print(data_frame_cum)
+
+#https://stackoverflow.com/questions/40811246/pandas-cumulative-return-function/40811680
+# df.ix["Cumulative"] = ((data_frame_sum+1).cumprod()-1).iloc[-1]
+# print(df.ix["Cumulative"])
+
+
+
+# 
