@@ -4,12 +4,11 @@ import json
 import os
 import requests
 import statistics
-#import plotly
-#import plotly.graph_objs as go
+import plotly
+import plotly.graph_objs as go
 import pandas as pd
 import glob
-
-
+import math
 
 #def to_usd(my_price):
  #   return "${0:,.2f}".format(my_price)
@@ -82,32 +81,48 @@ all_files = glob.glob(path + "/*.csv")
 
 li = []
 for filename in all_files:
-    df = pd.read_csv(filename, header=0)
+    df = pd.read_csv(filename, header=0).head(25)
     li.append(df)
 frame = pd.concat(li, axis=1)
 print(frame)
+#sort dates oldest to newest
 frames = frame.sort_index(ascending=False)
-new_frame = frames[['close']]
 
+#create data frame with only close prices
+new_frame = frames[['close']]
 print(new_frame)
 
+#daily return of each stock by percent
 daily_return = new_frame.pct_change(1)
 print(new_frame.pct_change(1))
+
+#Multiply each column of the data frame by the weight ##
 data_frame = daily_return.mul(weight_list)
 print(data_frame)
 
-data_frame_sum = data_frame.sum(axis=1)
-print(data_frame_sum)
+#sum returns of stocks for each day
+data_row_total = data_frame.sum(axis=1)
+print(data_row_total)
 
-data_sum = data_frame_sum.add(1)
+#add 1 to the sum of return for each day to calculate cumulative returns
+data_sum = data_row_total.add(1)
 print(data_sum)
 
+#print cumulative daily returns
 data_frame_cum = data_sum.cumprod()
 print(data_frame_cum)
 
-#https://stackoverflow.com/questions/40811246/pandas-cumulative-return-function/40811680
-# df.ix["Cumulative"] = ((data_frame_sum+1).cumprod()-1).iloc[-1]
-# print(df.ix["Cumulative"])
+##calculate ratios
+#annual standard deviation
+st_dev = data_row_total.values.std() * math.sqrt(252)
+print (st_dev)
+
+
+#plot the cumulative returns over time
+# plotly.offline.plot({
+#     "data": [go.Scatter(x=dates, y=data_sum)],
+#     "layout": go.Layout(title= "Price Chart")
+# }, auto_open=True)
 
 
 
