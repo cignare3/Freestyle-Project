@@ -17,8 +17,12 @@ import glob
 from dotenv import load_dotenv
 load_dotenv()
 
-stock_list = ["MSFT", "GOOG"]
-weight_list = [50,10]
+stock_list = ["MSFT", "GOOG", "AAPL"]
+weight_list = [.50,.10,.20]
+
+# def merge(stock_list, weight_list): 
+#     merged_list = [(stock_list[i], weight_list[i]) for i in range(0, len(stock_list)] 
+#     return merged_list 
 
 # while True:
 #     stock_symbol = input("Please enter stock symbol or 'DONE' if complete: ")
@@ -77,17 +81,13 @@ path = r'C:\Users\tyler\Documents\GitHub\Freestyle-Project\data' # use your path
 all_files = glob.glob(path + "/*.csv")
 
 li = []
+print(all_files)
 for filename in all_files:
     df = pd.read_csv(filename, header=0).head(3)
     li.append(df)
 frame = pd.concat(li, axis=1)
 new_frame = frame[['close']]
 
-# df.columns = stock_list
-#print(frame)
-# #print(type(frame))
-# #stock = pandas.DataFrame[0]
-# #print(stock)
 print(new_frame)
 
 
@@ -95,26 +95,7 @@ daily_return = new_frame.pct_change(1)
 print(new_frame.pct_change(1))
 data_frame = daily_return.mul(weight_list)
 print(data_frame)
-# def daily_return(new_frame):
-#     return prices[:-1].values / prices[1:] - 1
 
+data_frame_sum = data_frame.sum(axis=1)
+print(data_frame_sum)
 
-
-#values = df.values.tolist()
-#frames = list(frame.row.values)
-#print(values)
-
-
-
-# daily_return(frame[0])
-    
-#print(frame)
-
-
-
-# dicts = df.to_dict().values()
-# print(dicts)
-#print(frame)
-
-# row_list = [df.columns.values.tolist()] + df.values.tolist()
-# print(row_list)
