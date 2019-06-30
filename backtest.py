@@ -67,7 +67,7 @@ for symbol in stock_list:
             daily_prices = tsd[date]  
     
     #looping
-            writer.writerows.sort({
+            writer.writerow({
                 "timestamp": date, 
                 #"open": daily_prices["1. open"],
                 #"high": daily_prices["2. high"],
@@ -82,10 +82,12 @@ all_files = glob.glob(path + "/*.csv")
 
 li = []
 for filename in all_files:
-    df = pd.read_csv(filename, header=0).head(5)
+    df = pd.read_csv(filename, header=0)
     li.append(df)
 frame = pd.concat(li, axis=1)
-new_frame = frame[['close']]
+print(frame)
+frames = frame.sort_index(ascending=False)
+new_frame = frames[['close']]
 
 print(new_frame)
 
