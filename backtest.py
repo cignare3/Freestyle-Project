@@ -10,18 +10,15 @@ import pandas as pd
 import glob
 import math
 
-#def to_usd(my_price):
- #   return "${0:,.2f}".format(my_price)
+def to_usd(my_price):
+    return "{0:,.2f}".format(my_price)
 
 from dotenv import load_dotenv
 load_dotenv()
 
 stock_list = ["MSFT", "GOOG", "AAPL"]
 weight_list = [.50,.10,.20]
-
-# def merge(stock_list, weight_list): 
-#     merged_list = [(stock_list[i], weight_list[i]) for i in range(0, len(stock_list)] 
-#     return merged_list 
+days_lookback = 200
 
 # while True:
 #     stock_symbol = input("Please enter stock symbol or 'DONE' if complete: ")
@@ -40,8 +37,6 @@ weight_list = [.50,.10,.20]
 
 #print(stock_list)
 #print(weight_list)
-
-#close_prices = []
 
 for symbol in stock_list:
     API_KEY = os.environ.get("ALPHADVANTAGE_API_KEY")
@@ -75,8 +70,6 @@ for symbol in stock_list:
                 #"volume": daily_prices["5. volume"]
             })
 
-
-
 #Read CSV files into Pandas Data Frame
 
 path = r'C:\Users\tyler\Documents\GitHub\Freestyle-Project\data' # use your path
@@ -84,10 +77,11 @@ all_files = glob.glob(path + "/*.csv")
 
 li = []
 for filename in all_files:
-    df = pd.read_csv(filename, header=0).head(10)
+    df = pd.read_csv(filename, header=0)
     li.append(df)
+pd.set_option("display.max_rows",25)
 frame = pd.concat(li, axis=1)
-print(frame)
+#print(frame)
 
 
 #sort dates oldest to newest
@@ -95,45 +89,48 @@ frames = frame.sort_index(ascending=False)
 
 #create data frame with only close prices
 new_frame = frames[['close']]
-print(new_frame)
+#print(new_frame)
 
 #daily return of each stock by percent
 daily_return = new_frame.pct_change(1)
-print(new_frame.pct_change(1))
+#print(new_frame.pct_change(1))
 
 #Multiply each column of the data frame by the weight ##
 data_frame = daily_return.mul(weight_list)
-print(data_frame)
+#print(data_frame)
 
 #sum returns of stocks for each day
 data_row_total = data_frame.sum(axis=1)
-print(data_row_total)
+#print(data_row_total)
 
 #add 1 to the sum of return for each day to calculate cumulative returns
 data_sum = data_row_total.add(1)
-print(data_sum)
+#print(data_sum)
 
 #print cumulative daily returns
 data_frame_cum = data_sum.cumprod()
 data_frame_cum_sort = data_frame_cum.sort_index(ascending=True)
-print(data_frame_cum)
+#print(data_frame_cum)
 
 ##calculate ratios
 #annual standard deviation
 st_dev = data_row_total.values.std() * math.sqrt(252)
-avg_daily = data_row_total.mean() * 252
-sharpe_ratio = avg_daily / st_dev
+
+#daily return
+annual_ret = data_row_total.mean() * 252
+#sharpe/skew/kurtosis
+sharpe_ratio = annual_ret / st_dev
 skew = data_row_total.skew()
-#kurtosis = data_row_total.kurt()
+kurtosis = data_row_total.kurt()
 
-print (st_dev)
-print(avg_daily)
-print(sharpe_ratio)
-print(skew)
-#print(kurtosis)
-
+print (f"Standard Deviation: {to_usd(float(st_dev))}")
+print(f"Annual Return: {to_usd(float(annual_ret))}")
+print(f"Sharpe Ratio: {to_usd(float(sharpe_ratio))}")
+print(f"Skew: {to_usd(float(skew))}")
+print(f"Kurtosis: {to_usd(float(kurtosis))}")
 
 #plot the cumulative returns over time
+
 plotly.offline.plot({
     "data": [go.Scatter(x=dates, y=data_frame_cum_sort)],
     "layout": go.Layout(title= "Price Appreciation of $1 Invested")
