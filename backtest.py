@@ -152,8 +152,8 @@ st_dev = data_row_total.values.std() * math.sqrt(252)
 annual_ret = data_row_total.mean() * 252
 
 #period cumulative return
-period_return = data_frame_cum.iloc[0:] - 1
-#print(f"Period Return: {percent(float(period_return))}")
+period_return = data_frame_cum.tail(1) - 1
+print(f"Period Return: {percent(float(period_return))}")
 
 
 #sharpe/skew/kurtosis
