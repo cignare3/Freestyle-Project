@@ -12,9 +12,13 @@ import math
 
 def to_usd(my_price):
     return "{0:,.2f}".format(my_price)
+def percent(my_price):
+    return "{0:.2%}".format(my_price)
 
 from dotenv import load_dotenv
 load_dotenv()
+
+#Delete old CSV files from path:
 
 path = r'C:\Users\tyler\Documents\GitHub\Freestyle-Project\data' # use your path
 old_files = glob.glob(path + "/*.csv")
@@ -35,23 +39,43 @@ while True:
         break 
    # elif sum(weight_list) = 100
      #   break   
-    elif len(stock_symbol) > 5: #or weight.isalpha():
-     print("Stock symbol input too long or weight is not formatted correctly, expecting a ticker no more than 5 characters and wieght only contains digits")
+    elif len(stock_symbol) > 5 or weight > 1 or weight < 0:
+     print("Stock symbol input too long or weight is not formatted correctly, expecting a ticker no more than 5 characters and weight only contains digits")
     elif stock_symbol.isalpha(): #and weight.isdigit():  
         stock_list.append(stock_symbol)   
         weight_list.append(weight) 
     else: 
         print("Invalid Selection")
 
-print(stock_list)
-print(weight_list)
-print(type(weight_list))
+
+#Specify Number of Days going back to be tested:
+while True:
+    Days_tested = input("Please enter number of trading days to be tested: ")
+    if Days_tested.isalpha():
+        print("Invalid input, please input number")
+    else: 
+        break
+
+#Convert Days Input to a Intiger 
+days = int(Days_tested)
+
+#print(stock_list)
+# print(weight_list)
+# print(type(weight_list))
 
 for symbol in stock_list:
     API_KEY = os.environ.get("ALPHADVANTAGE_API_KEY")
-    request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&outputsize=compact&apikey={API_KEY}"
+    request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&outputsize=full&apikey={API_KEY}"
     response = requests.get(request_url)
     response_message = response.text
+
+
+#If Data Call Returns and Error:
+    if "Error" in response_message:
+        print("Invalid Stock Symbol please try again")
+        quit()
+
+
     parsed_response = json.loads(response.text)
     tsd = parsed_response["Time Series (Daily)"]
     dates = list(tsd.keys())
@@ -80,14 +104,12 @@ for symbol in stock_list:
             })
 
 #Read CSV files into Pandas Data Frame
-
-
 path = r'C:\Users\tyler\Documents\GitHub\Freestyle-Project\data' # use your path
 all_files = glob.glob(path + "/*.csv")
 
 li = []
 for filename in all_files:
-    df = pd.read_csv(filename, header=0)
+    df = pd.read_csv(filename, header=0).head(days)
     li.append(df)
 frame = pd.concat(li, axis=1)
 #print(frame)
@@ -98,19 +120,19 @@ frames = frame.sort_index(ascending=False)
 
 #create data frame with only close prices
 new_frame = frames[['close']]
-#print(new_frame)
+print(new_frame)
 
 #daily return of each stock by percent
 daily_return = new_frame.pct_change(1)
-#print(new_frame.pct_change(1))
+print(new_frame.pct_change(1))
 
 #Multiply each column of the data frame by the weight ##
 data_frame = daily_return.mul(weight_list)
-#print(data_frame)
+print(data_frame)
 
 #sum returns of stocks for each day
 data_row_total = data_frame.sum(axis=1)
-#print(data_row_total)
+print(data_row_total)
 
 #add 1 to the sum of return for each day to calculate cumulative returns
 data_sum = data_row_total.add(1)
@@ -119,21 +141,30 @@ data_sum = data_row_total.add(1)
 #print cumulative daily returns
 data_frame_cum = data_sum.cumprod()
 data_frame_cum_sort = data_frame_cum.sort_index(ascending=True)
-#print(data_frame_cum)
+print(data_frame_cum)
 
 ##calculate ratios
+
 #annual standard deviation
 st_dev = data_row_total.values.std() * math.sqrt(252)
 
 #daily return
 annual_ret = data_row_total.mean() * 252
+
+#period cumulative return
+period_return = data_frame_cum.iloc[0:] - 1
+#print(f"Period Return: {percent(float(period_return))}")
+
+
 #sharpe/skew/kurtosis
 sharpe_ratio = annual_ret / st_dev
 skew = data_row_total.skew()
 kurtosis = data_row_total.kurt()
 
-print (f"Standard Deviation: {to_usd(float(st_dev))}")
-print(f"Annual Return: {to_usd(float(annual_ret))}")
+#Print Results
+
+print (f"Annual Standard Deviation: {percent(float(st_dev))}")
+print(f"Annual Return: {percent(float(annual_ret))}")
 print(f"Sharpe Ratio: {to_usd(float(sharpe_ratio))}")
 print(f"Skew: {to_usd(float(skew))}")
 print(f"Kurtosis: {to_usd(float(kurtosis))}")
