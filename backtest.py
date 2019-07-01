@@ -16,27 +16,36 @@ def to_usd(my_price):
 from dotenv import load_dotenv
 load_dotenv()
 
-stock_list = ["MSFT", "GOOG", "AAPL"]
-weight_list = [.50,.10,.20]
-days_lookback = 200
+path = r'C:\Users\tyler\Documents\GitHub\Freestyle-Project\data' # use your path
+old_files = glob.glob(path + "/*.csv")
+for f in old_files:
+        os.remove(f)
 
-# while True:
-#     stock_symbol = input("Please enter stock symbol or 'DONE' if complete: ")
-#     weight = input("Please enter stock weight or 'DONE' if complete example 25 = 25%: ")
-#     if stock_symbol == "DONE" and weight =="DONE":
-#         break 
-#    # elif sum(weight_list) = 100
-#      #   break   
-#     elif len(stock_symbol) > 5 or weight.isalpha():
-#      print("Stock symbol input too long or weight is not formatted correctly, expecting a ticker no more than 5 characters and wieght only contains digits")
-#     elif stock_symbol.isalpha() and weight.isdigit():  
-#         stock_list.append(stock_symbol)   
-#         weight_list.append(weight) 
-#     else: 
-#         print("Invalid Selection")
 
-#print(stock_list)
-#print(weight_list)
+# stock_list = ["MSFT", "GOOG", "AAPL"]
+# weight_list = [.50,.10,.20]
+
+stock_list = []
+weight_list = []
+
+while True:
+    stock_symbol = input("Please enter stock symbol or 'DONE' if complete: ")
+    weight = float(input("Please enter stock weight or '0' if complete example .25 = 25%: "))
+    if stock_symbol == "DONE" and weight == 0:
+        break 
+   # elif sum(weight_list) = 100
+     #   break   
+    elif len(stock_symbol) > 5: #or weight.isalpha():
+     print("Stock symbol input too long or weight is not formatted correctly, expecting a ticker no more than 5 characters and wieght only contains digits")
+    elif stock_symbol.isalpha(): #and weight.isdigit():  
+        stock_list.append(stock_symbol)   
+        weight_list.append(weight) 
+    else: 
+        print("Invalid Selection")
+
+print(stock_list)
+print(weight_list)
+print(type(weight_list))
 
 for symbol in stock_list:
     API_KEY = os.environ.get("ALPHADVANTAGE_API_KEY")
@@ -72,6 +81,7 @@ for symbol in stock_list:
 
 #Read CSV files into Pandas Data Frame
 
+
 path = r'C:\Users\tyler\Documents\GitHub\Freestyle-Project\data' # use your path
 all_files = glob.glob(path + "/*.csv")
 
@@ -79,7 +89,6 @@ li = []
 for filename in all_files:
     df = pd.read_csv(filename, header=0)
     li.append(df)
-pd.set_option("display.max_rows",25)
 frame = pd.concat(li, axis=1)
 #print(frame)
 
@@ -133,7 +142,7 @@ print(f"Kurtosis: {to_usd(float(kurtosis))}")
 
 plotly.offline.plot({
     "data": [go.Scatter(x=dates, y=data_frame_cum_sort)],
-    "layout": go.Layout(title= "Price Appreciation of $1 Invested")
+    "layout": go.Layout(title= f"Price Appreciation of $1 Invested in {stock_list}")
 }, auto_open=True)
 
 
