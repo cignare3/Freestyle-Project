@@ -26,9 +26,6 @@ for f in old_files:
 
 stock_number = float(input("Please enter number of stocks in portfolio: "))
 
-# stock_list = ["MSFT", "GOOG", "AAPL"]
-# weight_list = [.50,.10,.20]
-
 stock_list = []
 weight_list = []
 stock_list_length = float(len(stock_list))
@@ -146,7 +143,6 @@ annual_ret = data_row_total.mean() * 252
 
 #period cumulative return
 period_return = data_frame_cum.tail(1) - 1
-
 
 
 #sharpe/skew/kurtosis

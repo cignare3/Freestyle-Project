@@ -24,5 +24,7 @@ From Here you will enter the ticker symbol i.e. "MSFT" and the weight i.e. .25 =
 
 Once you have reached the number of securities you specified in the first step, you will be prompted to input the number of days you would like to administer your backtest starting from today and going backwards. 
 
- Once you have input these characteristics, the system will calculate you custom portfolio return, standard devation, sharpe ratio, skew and kurtosis over that time period.  You will also be given a visual display of the growth of $1 invested in the porfolio over time.   -->
+ Once you have input these characteristics, the system will calculate you custom portfolio return, standard devation, sharpe ratio, skew and kurtosis over that time period.  You will also be given a visual display of the growth of $1 invested in the porfolio over time. 
+ 
+ ENJOY!  -->
 
