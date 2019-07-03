@@ -1,5 +1,4 @@
 import csv
-import datetime
 import json
 import os
 import requests
@@ -9,6 +8,9 @@ import plotly.graph_objs as go
 import pandas as pd
 import glob
 import math
+
+
+#count_list = int()
 
 def to_usd(my_price):
     return "{0:,.2f}".format(my_price)
@@ -25,27 +27,36 @@ old_files = glob.glob(path + "/*.csv")
 for f in old_files:
         os.remove(f)
 
+stock_number = float(input("Please enter number of stocks in portfolio: "))
 
 # stock_list = ["MSFT", "GOOG", "AAPL"]
 # weight_list = [.50,.10,.20]
 
 stock_list = []
 weight_list = []
-
+stock_list_length = float(len(stock_list))
+#dictWeight={}
+# print(list_number)
 while True:
-    stock_symbol = input("Please enter stock symbol or 'DONE' if complete: ")
-    weight = float(input("Please enter stock weight or '0' if complete example .25 = 25%: "))
-    if stock_symbol == "DONE" and weight == 0:
+    #count = len(stock_list)
+    #dictWeight[stock_symbol] = weight
+    if stock_number == stock_list_length: #and weight == 0:
         break 
-   # elif sum(weight_list) = 100
-     #   break   
-    elif len(stock_symbol) > 5 or weight > 1 or weight < 0:
+    stock_symbol = input("Please enter stock symbol or 'DONE' if complete: ")
+    weight = float(input("Please enter stock weight or '0' if complete example .25 = 25%: "))    
+    #elif weight.isalpha():
+    # print("Weight is not formatted correctly, weight only contains digits")
+    if len(stock_symbol) > 5 or weight > 1 or weight < 0:
      print("Stock symbol input too long or weight is not formatted correctly, expecting a ticker no more than 5 characters and weight only contains digits")
     elif stock_symbol.isalpha(): #and weight.isdigit():  
-        stock_list.append(stock_symbol)   
-        weight_list.append(weight) 
+         stock_list.append(stock_symbol)   
+         weight_list.append(weight)
+         stock_list_length = float(len(stock_list))
+         print(stock_list_length)
+         print(stock_number)
     else: 
         print("Invalid Selection")
+print(stock_list)
 
 
 #Specify Number of Days going back to be tested:
@@ -59,9 +70,7 @@ while True:
 #Convert Days Input to a Intiger 
 days = int(Days_tested)
 
-#print(stock_list)
-# print(weight_list)
-# print(type(weight_list))
+stock_index = 0
 
 for symbol in stock_list:
     API_KEY = os.environ.get("ALPHADVANTAGE_API_KEY")
@@ -75,7 +84,6 @@ for symbol in stock_list:
         print("Invalid Stock Symbol please try again")
         quit()
 
-
     parsed_response = json.loads(response.text)
     tsd = parsed_response["Time Series (Daily)"]
     dates = list(tsd.keys())
@@ -84,7 +92,8 @@ for symbol in stock_list:
             #close_price = tsd[date]["4. close"]
             #close_prices.append(float((close_price)))
     #print(parsed_response)
-    csv_file_path = os.path.join(os.path.dirname(__file__), "data", f"{symbol}.prices.csv")
+    stock_index = stock_index + 1
+    csv_file_path = os.path.join(os.path.dirname(__file__), "data", f"{stock_index}{symbol}.prices.csv")
     #csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
     csv_headers = ["timestamp", "close"]
     with open(csv_file_path, "w") as csv_file:
@@ -112,7 +121,7 @@ for filename in all_files:
     df = pd.read_csv(filename, header=0).head(days)
     li.append(df)
 frame = pd.concat(li, axis=1)
-#print(frame)
+print(frame)
 
 
 #sort dates oldest to newest
@@ -153,7 +162,7 @@ annual_ret = data_row_total.mean() * 252
 
 #period cumulative return
 period_return = data_frame_cum.tail(1) - 1
-print(f"Period Return: {percent(float(period_return))}")
+
 
 
 #sharpe/skew/kurtosis
@@ -162,7 +171,7 @@ skew = data_row_total.skew()
 kurtosis = data_row_total.kurt()
 
 #Print Results
-
+print(f"Period Return: {percent(float(period_return))}")
 print (f"Annual Standard Deviation: {percent(float(st_dev))}")
 print(f"Annual Return: {percent(float(annual_ret))}")
 print(f"Sharpe Ratio: {to_usd(float(sharpe_ratio))}")
