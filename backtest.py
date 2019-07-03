@@ -9,9 +9,6 @@ import pandas as pd
 import glob
 import math
 
-
-#count_list = int()
-
 def to_usd(my_price):
     return "{0:,.2f}".format(my_price)
 def percent(my_price):
@@ -35,28 +32,20 @@ stock_number = float(input("Please enter number of stocks in portfolio: "))
 stock_list = []
 weight_list = []
 stock_list_length = float(len(stock_list))
-#dictWeight={}
-# print(list_number)
 while True:
-    #count = len(stock_list)
-    #dictWeight[stock_symbol] = weight
     if stock_number == stock_list_length: #and weight == 0:
         break 
     stock_symbol = input("Please enter stock symbol or 'DONE' if complete: ")
     weight = float(input("Please enter stock weight or '0' if complete example .25 = 25%: "))    
-    #elif weight.isalpha():
-    # print("Weight is not formatted correctly, weight only contains digits")
+    weight_float = float()
     if len(stock_symbol) > 5 or weight > 1 or weight < 0:
      print("Stock symbol input too long or weight is not formatted correctly, expecting a ticker no more than 5 characters and weight only contains digits")
     elif stock_symbol.isalpha(): #and weight.isdigit():  
          stock_list.append(stock_symbol)   
          weight_list.append(weight)
          stock_list_length = float(len(stock_list))
-         print(stock_list_length)
-         print(stock_number)
     else: 
         print("Invalid Selection")
-print(stock_list)
 
 
 #Specify Number of Days going back to be tested:
@@ -89,12 +78,8 @@ for symbol in stock_list:
     dates = list(tsd.keys())
     for date in dates:
             daily_prices = tsd[date]  
-            #close_price = tsd[date]["4. close"]
-            #close_prices.append(float((close_price)))
-    #print(parsed_response)
     stock_index = stock_index + 1
     csv_file_path = os.path.join(os.path.dirname(__file__), "data", f"{stock_index}{symbol}.prices.csv")
-    #csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
     csv_headers = ["timestamp", "close"]
     with open(csv_file_path, "w") as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
@@ -121,7 +106,7 @@ for filename in all_files:
     df = pd.read_csv(filename, header=0).head(days)
     li.append(df)
 frame = pd.concat(li, axis=1)
-print(frame)
+#print(frame)
 
 
 #sort dates oldest to newest
@@ -129,19 +114,19 @@ frames = frame.sort_index(ascending=False)
 
 #create data frame with only close prices
 new_frame = frames[['close']]
-print(new_frame)
+#print(new_frame)
 
 #daily return of each stock by percent
 daily_return = new_frame.pct_change(1)
-print(new_frame.pct_change(1))
+#print(new_frame.pct_change(1))
 
 #Multiply each column of the data frame by the weight ##
 data_frame = daily_return.mul(weight_list)
-print(data_frame)
+#print(data_frame)
 
 #sum returns of stocks for each day
 data_row_total = data_frame.sum(axis=1)
-print(data_row_total)
+#print(data_row_total)
 
 #add 1 to the sum of return for each day to calculate cumulative returns
 data_sum = data_row_total.add(1)
@@ -150,7 +135,7 @@ data_sum = data_row_total.add(1)
 #print cumulative daily returns
 data_frame_cum = data_sum.cumprod()
 data_frame_cum_sort = data_frame_cum.sort_index(ascending=True)
-print(data_frame_cum)
+#print(data_frame_cum)
 
 ##calculate ratios
 
