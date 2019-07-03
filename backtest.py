@@ -33,11 +33,10 @@ stock_list = []
 weight_list = []
 stock_list_length = float(len(stock_list))
 while True:
-    if stock_number == stock_list_length: #and weight == 0:
+    if stock_number == stock_list_length:
         break 
     stock_symbol = input("Please enter stock symbol or 'DONE' if complete: ")
     weight = float(input("Please enter stock weight or '0' if complete example .25 = 25%: "))    
-    weight_float = float()
     if len(stock_symbol) > 5 or weight > 1 or weight < 0:
      print("Stock symbol input too long or weight is not formatted correctly, expecting a ticker no more than 5 characters and weight only contains digits")
     elif stock_symbol.isalpha(): #and weight.isdigit():  
