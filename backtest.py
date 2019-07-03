@@ -24,16 +24,25 @@ old_files = glob.glob(path + "/*.csv")
 for f in old_files:
         os.remove(f)
 
-stock_number = float(input("Please enter number of stocks in portfolio: "))
+
+while True:
+    stock_number = input("Please enter number of stocks in portfolio: ")
+    if stock_number.isalpha():
+            print("Invalid input, please input number")
+    else: 
+        break
 
 stock_list = []
 weight_list = []
-stock_list_length = float(len(stock_list))
+stock_list_length = int(len(stock_list))
+stock_weight = {}
+
 while True:
-    if stock_number == stock_list_length:
+    if int(stock_number) == stock_list_length:
         break 
-    stock_symbol = input("Please enter stock symbol or 'DONE' if complete: ")
-    weight = float(input("Please enter stock weight or '0' if complete example .25 = 25%: "))    
+    stock_symbol = input("Please enter stock symbol, example 'MSFT': ")
+    weight = float(input("Please enter stock weight, example .25 = 25%: "))  
+    stock_weight[stock_symbol] = weight 
     if len(stock_symbol) > 5 or weight > 1 or weight < 0:
      print("Stock symbol input too long or weight is not formatted correctly, expecting a ticker no more than 5 characters and weight only contains digits")
     elif stock_symbol.isalpha(): #and weight.isdigit():  
@@ -43,10 +52,9 @@ while True:
     else: 
         print("Invalid Selection")
 
-
 #Specify Number of Days going back to be tested:
 while True:
-    Days_tested = input("Please enter number of trading days to be tested: ")
+    Days_tested = input("Please enter number of trading days to be tested:")
     if Days_tested.isalpha():
         print("Invalid input, please input number")
     else: 
@@ -144,25 +152,33 @@ annual_ret = data_row_total.mean() * 252
 #period cumulative return
 period_return = data_frame_cum.tail(1) - 1
 
-
 #sharpe/skew/kurtosis
 sharpe_ratio = annual_ret / st_dev
 skew = data_row_total.skew()
 kurtosis = data_row_total.kurt()
 
 #Print Results
+print("--------------------------")
+print(f"Portfolio: Weight {stock_weight}")
+print("--------------------------")
 print(f"Period Return: {percent(float(period_return))}")
-print (f"Annual Standard Deviation: {percent(float(st_dev))}")
-print(f"Annual Return: {percent(float(annual_ret))}")
+print("--------------------------")
+print (f"Annualized Standard Deviation: {percent(float(st_dev))}")
+print("--------------------------")
+print(f"Annualized Return: {percent(float(annual_ret))}")
+print("--------------------------")
 print(f"Sharpe Ratio: {to_usd(float(sharpe_ratio))}")
+print("--------------------------")
 print(f"Skew: {to_usd(float(skew))}")
+print("--------------------------")
 print(f"Kurtosis: {to_usd(float(kurtosis))}")
+print("--------------------------")
 
 #plot the cumulative returns over time
 
 plotly.offline.plot({
     "data": [go.Scatter(x=dates, y=data_frame_cum_sort)],
-    "layout": go.Layout(title= f"Price Appreciation of $1 Invested in {stock_list}")
+    "layout": go.Layout(title= f"Price Appreciation of $1 Invested")
 }, auto_open=True)
 
 

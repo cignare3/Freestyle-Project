@@ -11,7 +11,7 @@ From within the virtual environment, install the required packages specified in 
 pip install -r requirements.txt
 
 
-You will need to change the path of the data written to CSV files on line 22 and 100 to correspond to your local computer.  
+You will need to change the path of the data written to CSV files on line 22 and 99 to correspond to your local computer.  
 
 You will need to create a .env file in the project repository and insert your API key like in the example below.
 
